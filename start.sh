@@ -21,15 +21,36 @@ else
     exit 1
 fi
 
+# Check if we're on Ubuntu/Debian and install python3-venv if needed
+if command -v apt >/dev/null 2>&1; then
+    if ! python3 -m venv --help >/dev/null 2>&1; then
+        echo "📦 Installing python3-venv package..."
+        sudo apt update && sudo apt install -y python3-venv
+    fi
+fi
+
 # Install dependencies if needed
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
-    python3 -m venv venv
+    if ! python3 -m venv venv; then
+        echo "❌ Failed to create virtual environment. Trying alternative approach..."
+        echo "📦 Installing dependencies system-wide (not recommended for production)..."
+        pip3 install -r requirements.txt
+        echo "⚠️  Dependencies installed system-wide. Consider using a virtual environment for production."
+        echo "🚀 Starting weather plugin service..."
+        python3 main.py
+        exit 0
+    fi
 fi
 
 echo "📦 Installing dependencies..."
-source venv/bin/activate
-pip install -r requirements.txt
+if [ -f "venv/bin/activate" ]; then
+    source venv/bin/activate
+    pip install -r requirements.txt
+else
+    echo "❌ Virtual environment not found. Installing system-wide..."
+    pip3 install -r requirements.txt
+fi
 
 # Start the service
 echo "🚀 Starting weather plugin service..."

@@ -80,24 +80,52 @@ DEBUG=False
 
 ### 4. Running the Service
 
+#### Option 1: Quick Start (Recommended)
+```bash
+# Make scripts executable
+chmod +x start.sh start-ubuntu.sh start-docker.sh
+
+# For most systems
+./start.sh
+
+# For Ubuntu/Debian with externally managed Python
+./start-ubuntu.sh
+
+# For Docker (most reliable)
+./start-docker.sh
+```
+
+#### Option 2: Manual Setup
 ```bash
 # Development
-python main.py
+python3 main.py
 
 # Production with uvicorn
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-### 5. Docker Deployment
-
+#### Option 3: Docker Deployment
 ```bash
 # Build and run with Docker Compose
 docker-compose up -d
 
 # Or build and run manually
 docker build -t trmnl-weather .
-docker run -p 8000:8000 --env-file .env trmnl-weather
+docker run -p 8000:8000 --env-file .secrets trmnl-weather
 ```
+
+### Ubuntu/Debian Specific Notes
+
+If you encounter "externally managed environment" errors on Ubuntu:
+
+1. **Use the Ubuntu script**: `./start-ubuntu.sh`
+2. **Or use Docker**: `./start-docker.sh` (recommended)
+3. **Or install system packages**:
+   ```bash
+   sudo apt install python3-venv python3-pip
+   pip3 install --break-system-packages -r requirements.txt
+   python3 main.py
+   ```
 
 ## API Usage
 
