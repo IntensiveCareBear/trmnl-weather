@@ -125,6 +125,37 @@ trmnl_service = TRMNLWebhookService(settings.TRMNL_WEBHOOK_URL)
 gemini_service = GeminiQuoteService(settings.GEMINI_API_KEY)
 data_transformer = WeatherDataTransformer(gemini_service)
 
+# Scheduled task for automatic webhook updates
+async def scheduled_weather_update():
+    """Send weather data to TRMNL webhook at configured intervals"""
+    while True:
+        try:
+            logger.info(f"🔄 Running scheduled weather update (every {settings.UPDATE_INTERVAL_MINUTES} minutes)...")
+            
+            # Get current weather data for default location
+            weather_data = await weather_service.get_current_weather(
+                settings.DEFAULT_LOCATION,
+                include_air_quality=True
+            )
+            
+            # Transform data for TRMNL view
+            trmnl_data = await data_transformer.transform_current_weather(weather_data)
+            
+            # Send to TRMNL webhook
+            success = await trmnl_service.send_weather_data(trmnl_data)
+            
+            if success:
+                logger.info(f"✅ Scheduled update sent successfully for {settings.DEFAULT_LOCATION}")
+            else:
+                logger.error("❌ Scheduled update failed to send to TRMNL webhook")
+                
+        except Exception as e:
+            logger.error(f"❌ Error in scheduled weather update: {str(e)}")
+        
+        # Wait for configured interval (convert minutes to seconds)
+        await asyncio.sleep(settings.UPDATE_INTERVAL_MINUTES * 60)
+
+
 @app.get("/")
 async def root():
     return {"message": "TRMNL Weather Plugin API", "status": "running"}
@@ -307,6 +338,48 @@ async def get_quote_cache_stats():
         logger.error(f"Error getting cache stats: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@app.get("/scheduled-updates/status")
+async def get_scheduled_updates_status():
+    """Get status of scheduled updates"""
+    return {
+        "enabled": settings.ENABLE_SCHEDULED_UPDATES,
+        "interval_minutes": settings.UPDATE_INTERVAL_MINUTES,
+        "default_location": settings.DEFAULT_LOCATION,
+        "next_update_in": f"~{settings.UPDATE_INTERVAL_MINUTES} minutes"
+    }
+
+@app.post("/scheduled-updates/trigger")
+async def trigger_scheduled_update():
+    """Manually trigger a scheduled update"""
+    try:
+        logger.info("🔄 Manual trigger of scheduled update...")
+        
+        # Get current weather data for default location
+        weather_data = await weather_service.get_current_weather(
+            settings.DEFAULT_LOCATION,
+            include_air_quality=True
+        )
+        
+        # Transform data for TRMNL view
+        trmnl_data = await data_transformer.transform_current_weather(weather_data)
+        
+        # Send to TRMNL webhook
+        success = await trmnl_service.send_weather_data(trmnl_data)
+        
+        if success:
+            logger.info(f"✅ Manual update sent successfully for {settings.DEFAULT_LOCATION}")
+            return TRMNLResponse(success=True, data={
+                "message": f"Weather data sent to TRMNL for {settings.DEFAULT_LOCATION}",
+                "location": settings.DEFAULT_LOCATION,
+                "timestamp": datetime.utcnow().isoformat()
+            })
+        else:
+            return TRMNLResponse(success=False, error="Failed to send data to TRMNL webhook")
+            
+    except Exception as e:
+        logger.error(f"Unexpected error in trigger_scheduled_update: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 async def refresh_quotes_background():
     """Background task to refresh quotes every 2 hours"""
     while True:
@@ -320,6 +393,14 @@ async def refresh_quotes_background():
 @app.on_event("startup")
 async def startup_event():
     """Start background tasks on startup"""
+    # Start scheduled weather updates
+    if settings.ENABLE_SCHEDULED_UPDATES:
+        logger.info(f"🚀 Starting scheduled weather updates every {settings.UPDATE_INTERVAL_MINUTES} minutes...")
+        asyncio.create_task(scheduled_weather_update())
+    else:
+        logger.info("⏸️  Scheduled updates disabled")
+    
+    # Start quote refresh task
     asyncio.create_task(refresh_quotes_background())
     logger.info("Background quote refresh task started")
 

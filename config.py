@@ -35,6 +35,10 @@ class Settings:
     REQUEST_TIMEOUT: int = 30
     MAX_RETRIES: int = 3
     
+    # Scheduled Updates Configuration
+    UPDATE_INTERVAL_MINUTES: int = int(os.getenv("UPDATE_INTERVAL_MINUTES", "30"))
+    ENABLE_SCHEDULED_UPDATES: bool = os.getenv("ENABLE_SCHEDULED_UPDATES", "true").lower() == "true"
+    
     def validate(self) -> bool:
         """Validate required configuration"""
         if not self.WEATHER_API_KEY:
