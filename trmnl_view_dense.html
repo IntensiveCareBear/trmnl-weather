@@ -1,0 +1,276 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.0;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #000;
+}
+
+.weather-container {
+    padding: 8px;
+    max-height: 500px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.weather-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #000;
+}
+
+.main-temp {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.temp-display {
+    font-size: 5em;
+    font-weight: 800;
+    line-height: 0.7;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+}
+
+.location-info {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.condition-text {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.condition-icon {
+    font-size: 1.5em;
+    margin-right: 8px;
+}
+
+.feels-like {
+    font-size: 1em;
+    color: #555;
+}
+
+.temp-range {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+    font-size: 1.1em;
+}
+
+.temp-high {
+    font-weight: 700;
+    color: #e74c3c;
+}
+
+.temp-low {
+    font-weight: 700;
+    color: #3498db;
+}
+
+.weather-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    font-size: 0.85em;
+    padding: 8px;
+    background: #f8f8f8;
+    border: 2px solid #000;
+    border-radius: 6px;
+}
+
+.weather-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.stat-icon {
+    font-size: 1.8em;
+    margin-bottom: 2px;
+}
+
+.stat-label {
+    font-weight: 600;
+    font-size: 0.6em;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+}
+
+.stat-value {
+    font-weight: 800;
+    font-size: 1.2em;
+    line-height: 1.0;
+}
+
+.weather-quote {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+    font-style: italic;
+}
+
+.quote-text {
+    font-size: 0.85em;
+    line-height: 1.3;
+    color: #495057;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.quote-attribution {
+    font-size: 0.7em;
+    color: #6c757d;
+    text-align: right;
+    font-style: normal;
+}
+
+.quote-author {
+    font-weight: 600;
+}
+
+.quote-work {
+    color: #868e96;
+}
+
+.footer-info {
+    font-size: 0.65em;
+    color: #666;
+    text-align: center;
+    padding-top: 4px;
+    border-top: 1px solid #ccc;
+    margin-top: 6px;
+}
+
+/* Status indicators */
+.uv-high { 
+    color: #e74c3c; 
+    font-weight: 800; 
+}
+
+.aqi-bad { 
+    background: #e74c3c; 
+    color: #fff; 
+    padding: 1px 4px; 
+    border-radius: 3px;
+    font-weight: 700; 
+}
+
+.aqi-moderate { 
+    background: #f39c12; 
+    color: #fff; 
+    padding: 1px 4px; 
+    border-radius: 3px;
+    font-weight: 700; 
+}
+
+.aqi-good { 
+    color: #27ae60; 
+    font-weight: 700; 
+}
+
+/* Compact layout for smaller displays */
+@media (max-width: 400px) {
+    .weather-header {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .temp-display {
+        font-size: 4em;
+    }
+    
+    .weather-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+    }
+}
+</style>
+
+<div class="layout">
+    <div class="columns">
+        <div class="column">
+            <div class="markdown">
+                <div class="weather-container">
+                    <!-- Header with main temperature and key stats -->
+                    <div class="weather-header">
+                        <div class="main-temp">
+                            <div class="temp-display">{{ temp_c | default: "—" }}°</div>
+                            <div class="location-info">{{ location_name | default: "Unknown" }}{% if location_region %}, {{ location_region }}{% endif %}</div>
+                            <div class="condition-text">
+                                <span class="condition-icon">{% if condition_text contains "Sunny" or condition_text contains "Clear" %}☀️{% elsif condition_text contains "Cloudy" or condition_text contains "Overcast" %}☁️{% elsif condition_text contains "Rain" or condition_text contains "Drizzle" %}🌧️{% elsif condition_text contains "Storm" or condition_text contains "Thunder" %}⛈️{% elsif condition_text contains "Snow" or condition_text contains "Blizzard" %}❄️{% elsif condition_text contains "Fog" or condition_text contains "Mist" %}🌫️{% else %}🌤️{% endif %}</span>
+                                {{ condition_text | default: "—" }}
+                            </div>
+                            <div class="feels-like">Feels {{ feels_like_c | default: "—" }}°</div>
+                            <div class="temp-range">
+                                <span class="temp-high">H: {{ tomorrow_max_c | default: "—" }}°</span>
+                                <span class="temp-low">L: {{ tomorrow_min_c | default: "—" }}°</span>
+                            </div>
+                        </div>
+                        
+                        <div class="weather-stats">
+                            <div class="weather-stat">
+                                <div class="stat-icon">🌡️</div>
+                                <span class="stat-label">Wind Chill</span>
+                                <span class="stat-value">{{ windchill_c | default: "—" }}°</span>
+                            </div>
+                            <div class="weather-stat">
+                                <div class="stat-icon">☀️</div>
+                                <span class="stat-label">UV</span>
+                                <span class="stat-value {% if uv_index >= 8 %}uv-high{% endif %}">{{ uv_index | default: 0 }}</span>
+                            </div>
+                            <div class="weather-stat">
+                                <div class="stat-icon">🌬️</div>
+                                <span class="stat-label">AQI</span>
+                                <span class="stat-value {% if aqi_us >= 4 %}aqi-bad{% elsif aqi_us >= 2 %}aqi-moderate{% else %}aqi-good{% endif %}">{{ aqi_us | default: 0 }}</span>
+                            </div>
+                            <div class="weather-stat">
+                                <div class="stat-icon">💨</div>
+                                <span class="stat-label">Wind</span>
+                                <span class="stat-value">{{ wind_kph | default: 0 }}kph</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weather Quote -->
+                    {% if weather_quote %}
+                    <div class="weather-quote">
+                        <div class="quote-text">"{{ weather_quote.quote }}"</div>
+                        <div class="quote-attribution">
+                            <span class="quote-author">{{ weather_quote.author }}</span>
+                            <span class="quote-work">, {{ weather_quote.work }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Footer -->
+                    <div class="footer-info">
+                        Updated {{ formatted_time | default: "—" }} {{ timezone | default: "" }} • WeatherAPI.com
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
