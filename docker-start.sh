@@ -13,7 +13,7 @@ docker network prune -f
 
 # Build and start with the working configuration
 echo "🚀 Building and starting service..."
-docker-compose -f docker-compose-working.yml up --build -d
+docker-compose up --build -d
 
 # Wait for service to be ready
 echo "⏳ Waiting for service to be ready..."
@@ -24,15 +24,15 @@ echo "🧪 Testing service..."
 if curl -f http://localhost:8000/health > /dev/null 2>&1; then
     echo "✅ Service is running successfully!"
     echo "📊 Service status:"
-    docker-compose -f docker-compose-working.yml ps
+    docker-compose ps
     
     echo ""
     echo "🌐 Service is available at: http://localhost:8000"
     echo "📖 API docs: http://localhost:8000/docs"
-    echo "📊 View logs: docker-compose -f docker-compose-working.yml logs -f"
-    echo "🛑 Stop service: docker-compose -f docker-compose-working.yml down"
+    echo "📊 View logs: docker-compose logs -f"
+    echo "🛑 Stop service: docker-compose down"
 else
     echo "❌ Service failed to start properly"
     echo "📊 Container logs:"
-    docker-compose -f docker-compose-working.yml logs
+    docker-compose logs
 fi
