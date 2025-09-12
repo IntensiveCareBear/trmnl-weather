@@ -53,7 +53,18 @@ cp .secrets.example .secrets
 # Edit .secrets with your API keys
 ```
 
-### 3. Configuration
+### 3. Testing
+
+```bash
+# Run comprehensive tests
+python3 tests/test_local.py
+
+# Test specific functionality
+python3 tests/test_api.py
+python3 tests/test_docker.py
+```
+
+### 4. Configuration
 
 Create a `.secrets` file with your API keys (this file is ignored by Git for security):
 
