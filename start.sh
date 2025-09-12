@@ -49,9 +49,15 @@ if [ -f "venv/bin/activate" ]; then
     pip install -r requirements.txt
 else
     echo "❌ Virtual environment not found. Installing system-wide..."
-    pip3 install -r requirements.txt
+    echo "⚠️  Using --break-system-packages flag for externally managed environment..."
+    pip3 install --break-system-packages -r requirements.txt
 fi
 
 # Start the service
 echo "🚀 Starting weather plugin service..."
-python main.py
+if [ -f "venv/bin/activate" ]; then
+    source venv/bin/activate
+    python main.py
+else
+    python3 main.py
+fi

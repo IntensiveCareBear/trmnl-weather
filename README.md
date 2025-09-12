@@ -118,14 +118,24 @@ docker run -p 8000:8000 --env-file .secrets trmnl-weather
 
 If you encounter "externally managed environment" errors on Ubuntu:
 
+#### Quick Fix (Recommended)
+```bash
+# Run as root
+sudo ./setup-ubuntu.sh
+```
+
+#### Manual Fix
+```bash
+# Install dependencies with --break-system-packages
+sudo apt install python3-pip python3-venv python3-full
+pip3 install --break-system-packages -r requirements.txt
+python3 main.py
+```
+
+#### Alternative Options
 1. **Use the Ubuntu script**: `./start-ubuntu.sh`
-2. **Or use Docker**: `./start-docker.sh` (recommended)
-3. **Or install system packages**:
-   ```bash
-   sudo apt install python3-venv python3-pip
-   pip3 install --break-system-packages -r requirements.txt
-   python3 main.py
-   ```
+2. **Use Docker**: `./start-docker.sh` (most reliable)
+3. **Use systemd service**: `sudo ./setup-ubuntu.sh` (production ready)
 
 ## API Usage
 
