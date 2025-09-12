@@ -98,9 +98,7 @@ class TRMNLWebhookService:
     async def send_weather_data(self, weather_data: Dict[str, Any]) -> bool:
         """Send weather data to TRMNL webhook"""
         payload = {
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "weather_data",
-            "data": weather_data
+            "merge_variables": weather_data
         }
         
         async with httpx.AsyncClient() as client:
