@@ -132,14 +132,15 @@ async def scheduled_weather_update():
         try:
             logger.info(f"🔄 Running scheduled weather update (every {settings.UPDATE_INTERVAL_MINUTES} minutes)...")
             
-            # Get current weather data for default location
-            weather_data = await weather_service.get_current_weather(
+            # Get forecast data for default location (includes current + tomorrow's forecast)
+            weather_data = await weather_service.get_forecast(
                 settings.DEFAULT_LOCATION,
+                days=1,
                 include_air_quality=True
             )
             
             # Transform data for TRMNL view
-            trmnl_data = await data_transformer.transform_current_weather(weather_data)
+            trmnl_data = await data_transformer.transform_forecast(weather_data)
             
             # Send to TRMNL webhook
             success = await trmnl_service.send_weather_data(trmnl_data)
@@ -240,14 +241,15 @@ async def get_weather_trmnl_view_default(background_tasks: BackgroundTasks):
         # Use default location from config
         location = settings.DEFAULT_LOCATION
         
-        # Get current weather data
-        weather_data = await weather_service.get_current_weather(
+        # Get forecast data (includes current + tomorrow's forecast)
+        weather_data = await weather_service.get_forecast(
             location, 
+            days=1,
             include_air_quality=True
         )
         
         # Transform data for TRMNL view
-        transformed_data = await transformer.transform_current_weather(weather_data)
+        transformed_data = await transformer.transform_forecast(weather_data)
         
         # Send transformed data to TRMNL webhook in background
         background_tasks.add_task(trmnl_service.send_weather_data, transformed_data)
@@ -263,13 +265,13 @@ async def get_weather_trmnl_view_default(background_tasks: BackgroundTasks):
 async def get_weather_trmnl_view(request: WeatherRequest, background_tasks: BackgroundTasks):
     """Get weather data formatted specifically for TRMNL view"""
     try:
-        if request.days > 1:
+        if request.days >= 1:
             weather_data = await weather_service.get_forecast(
                 request.location,
                 request.days,
                 request.include_air_quality
             )
-            # Transform forecast data for TRMNL view
+            # Transform forecast data for TRMNL view (includes current + forecast)
             trmnl_data = await data_transformer.transform_forecast(weather_data)
         else:
             weather_data = await weather_service.get_current_weather(
