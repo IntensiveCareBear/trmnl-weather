@@ -1,0 +1,28 @@
+services:
+  weather-plugin:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .secrets
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=False
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Add network configuration
+    networks:
+      - weather-network
+
+networks:
+  weather-network:
+    driver: bridge
