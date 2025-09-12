@@ -15,6 +15,7 @@ class Settings:
     # Weather API Configuration
     WEATHER_API_KEY: str = os.getenv("WEATHER_API_KEY", "")
     WEATHER_API_BASE_URL: str = "http://api.weatherapi.com/v1"
+    DEFAULT_LOCATION: str = os.getenv("DEFAULT_LOCATION", "London")
     
     # Gemini API Configuration
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "your_gemini_api_key_here")

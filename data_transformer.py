@@ -20,10 +20,6 @@ class WeatherDataTransformer:
         current = data.get('current', {})
         air_quality = current.get('air_quality', {})
         
-        # Debug AQI data
-        if air_quality:
-            print(f"Debug AQI data: {air_quality}")
-        
         # Get tomorrow's forecast if available
         forecast = data.get('forecast', {})
         tomorrow_data = None

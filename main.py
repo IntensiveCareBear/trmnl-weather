@@ -202,6 +202,32 @@ async def send_weather_to_trmnl(request: WeatherRequest, background_tasks: Backg
         logger.error(f"Unexpected error in send_weather_to_trmnl: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@app.get("/weather/trmnl-view")
+async def get_weather_trmnl_view_default(background_tasks: BackgroundTasks):
+    """Get TRMNL view with default location"""
+    try:
+        # Use default location from config
+        location = settings.DEFAULT_LOCATION
+        
+        # Get current weather data
+        weather_data = await weather_service.get_current_weather(
+            location, 
+            include_air_quality=True
+        )
+        
+        # Transform data for TRMNL view
+        transformed_data = await transformer.transform_current_weather(weather_data)
+        
+        # Send to TRMNL webhook in background
+        background_tasks.add_task(trmnl_service.send_weather_data, transformed_data)
+        
+        return TRMNLResponse(success=True, data=transformed_data)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error in get_weather_trmnl_view_default: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @app.post("/weather/trmnl-view")
 async def get_weather_trmnl_view(request: WeatherRequest, background_tasks: BackgroundTasks):
     """Get weather data formatted specifically for TRMNL view"""
