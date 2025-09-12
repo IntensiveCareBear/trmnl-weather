@@ -116,7 +116,7 @@ class GeminiQuoteService:
                 response.raise_for_status()
                 
                 result = response.json()
-                return self._parse_gemini_response(result, condition, location)
+                return self._parse_gemini_response(result, condition, location, weather_data)
                 
         except httpx.HTTPStatusError as e:
             logger.error(f"Gemini API error: {e.response.status_code} - {e.response.text}")
@@ -183,7 +183,7 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
         else:
             return "calm, peaceful, gentle"
     
-    def _parse_gemini_response(self, response: Dict[str, Any], condition: str, location: str) -> Optional[WeatherQuote]:
+    def _parse_gemini_response(self, response: Dict[str, Any], condition: str, location: str, weather_data: Dict[str, Any]) -> Optional[WeatherQuote]:
         """Parse Gemini API response and create WeatherQuote object"""
         try:
             # Extract text from Gemini response
@@ -216,6 +216,8 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
             quote_data = json.loads(json_text)
             
             # Bolden weather-related words in the quote
+            temp_c = weather_data.get('temp_c', 0)
+            wind_speed = weather_data.get('wind_kph', 0)
             boldened_quote = self._bolden_weather_words(quote_data.get('quote', ''), condition, temp_c, wind_speed)
             
             return WeatherQuote(
