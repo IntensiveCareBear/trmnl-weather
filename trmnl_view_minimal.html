@@ -35,7 +35,7 @@ body {
 }
 
 .temp-display {
-    font-size: 6em;
+    font-size: 8em;
     font-weight: 800;
     line-height: 0.7;
     margin-bottom: 4px;
@@ -43,13 +43,13 @@ body {
 }
 
 .location-info {
-    font-size: 1.3em;
+    font-size: 1.8em;
     font-weight: 600;
     margin-bottom: 4px;
 }
 
 .condition-text {
-    font-size: 1.2em;
+    font-size: 1.6em;
     color: #333;
     margin-bottom: 4px;
     display: flex;
@@ -58,12 +58,12 @@ body {
 }
 
 .condition-icon {
-    font-size: 1.8em;
+    font-size: 2.2em;
     margin-right: 8px;
 }
 
 .feels-like {
-    font-size: 1.1em;
+    font-size: 1.4em;
     color: #555;
 }
 
@@ -71,7 +71,7 @@ body {
     display: flex;
     gap: 24px;
     margin-top: 8px;
-    font-size: 1.2em;
+    font-size: 1.5em;
     justify-content: center;
 }
 
@@ -88,9 +88,9 @@ body {
 .weather-stats {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 4px;
-    font-size: 0.8em;
-    padding: 6px;
+    gap: 6px;
+    font-size: 1.0em;
+    padding: 8px;
     background: #f8f8f8;
     border: 2px solid #000;
     border-radius: 6px;
@@ -108,13 +108,13 @@ body {
 }
 
 .stat-icon {
-    font-size: 2em;
+    font-size: 2.5em;
     margin-bottom: 2px;
 }
 
 .stat-label {
     font-weight: 600;
-    font-size: 0.5em;
+    font-size: 0.7em;
     margin-bottom: 1px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -123,7 +123,7 @@ body {
 
 .stat-value {
     font-weight: 800;
-    font-size: 1.1em;
+    font-size: 1.4em;
     line-height: 1.0;
 }
 
@@ -137,7 +137,7 @@ body {
 }
 
 .quote-text {
-    font-size: 0.8em;
+    font-size: 1.0em;
     line-height: 1.2;
     color: #495057;
     margin-bottom: 3px;
@@ -145,7 +145,7 @@ body {
 }
 
 .quote-attribution {
-    font-size: 0.65em;
+    font-size: 0.8em;
     color: #6c757d;
     text-align: right;
     font-style: normal;
@@ -199,11 +199,20 @@ body {
 @media (max-width: 500px) {
     .weather-stats {
         grid-template-columns: 1fr 1fr;
-        gap: 3px;
+        gap: 4px;
+        font-size: 0.9em;
     }
     
     .temp-display {
-        font-size: 4.5em;
+        font-size: 6em;
+    }
+    
+    .location-info {
+        font-size: 1.4em;
+    }
+    
+    .condition-text {
+        font-size: 1.3em;
     }
     
     .weather-container {
@@ -247,7 +256,7 @@ body {
                         <div class="weather-stat">
                             <div class="stat-icon">🌬️</div>
                             <span class="stat-label">AQI</span>
-                            <span class="stat-value {% if aqi_us >= 4 %}aqi-bad{% elsif aqi_us >= 2 %}aqi-moderate{% else %}aqi-good{% endif %}">{{ aqi_us | default: 0 }}</span>
+                            <span class="stat-value {% if aqi_us >= 4 %}aqi-bad{% elsif aqi_us >= 2 %}aqi-moderate{% else %}aqi-good{% endif %}">{% if aqi_us and aqi_us > 0 %}{{ aqi_us }}{% else %}—{% endif %}</span>
                         </div>
                         <div class="weather-stat">
                             <div class="stat-icon">💨</div>

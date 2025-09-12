@@ -20,6 +20,10 @@ class WeatherDataTransformer:
         current = data.get('current', {})
         air_quality = current.get('air_quality', {})
         
+        # Debug AQI data
+        if air_quality:
+            print(f"Debug AQI data: {air_quality}")
+        
         # Get tomorrow's forecast if available
         forecast = data.get('forecast', {})
         tomorrow_data = None
@@ -71,8 +75,8 @@ class WeatherDataTransformer:
             # UV Index
             'uv_index': current.get('uv', 0),
             
-            # Air Quality Index (US EPA)
-            'aqi_us': air_quality.get('us-epa-index', 0),
+            # Air Quality Index (US EPA) - try multiple sources
+            'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
             
             # Timestamp
             'formatted_time': WeatherDataTransformer._format_timestamp(
@@ -145,8 +149,8 @@ class WeatherDataTransformer:
             # UV Index
             'uv_index': current.get('uv', 0),
             
-            # Air Quality Index (US EPA)
-            'aqi_us': air_quality.get('us-epa-index', 0),
+            # Air Quality Index (US EPA) - try multiple sources
+            'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
             
             # Timestamp
             'formatted_time': WeatherDataTransformer._format_timestamp(
