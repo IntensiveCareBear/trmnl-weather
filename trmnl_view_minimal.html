@@ -11,68 +11,73 @@ body {
 }
 
 .weather-container {
-    padding: 6px;
+    padding: 4px;
     max-height: 600px;
     overflow: hidden;
     width: 100%;
 }
 
-.weather-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
+/* Main temperature section - made smaller */
 .main-temp {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 8px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 8px;
+    padding: 6px;
     background: #f8f8f8;
     border: 2px solid #000;
     border-radius: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+}
+
+.temp-left {
+    text-align: center;
+}
+
+.temp-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .temp-display {
-    font-size: 8em;
+    font-size: 4em;
     font-weight: 800;
     line-height: 0.7;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     letter-spacing: -0.02em;
 }
 
 .location-info {
-    font-size: 1.8em;
+    font-size: 1.2em;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .condition-text {
-    font-size: 1.6em;
+    font-size: 1.0em;
     color: #333;
-    margin-bottom: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
 }
 
 .condition-icon {
-    font-size: 2.2em;
-    margin-right: 8px;
+    font-size: 1.2em;
 }
 
 .feels-like {
-    font-size: 1.4em;
+    font-size: 1.0em;
     color: #555;
+    margin-bottom: 4px;
 }
 
 .temp-range {
     display: flex;
-    gap: 24px;
-    margin-top: 8px;
-    font-size: 1.5em;
-    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 1.1em;
 }
 
 .temp-high {
@@ -85,15 +90,17 @@ body {
     color: #3498db;
 }
 
+/* Horizontal stats layout */
 .weather-stats {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 6px;
-    font-size: 1.0em;
-    padding: 8px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 4px;
+    font-size: 0.9em;
+    padding: 6px;
     background: #f8f8f8;
     border: 2px solid #000;
     border-radius: 6px;
+    margin-bottom: 6px;
 }
 
 .weather-stat {
@@ -101,71 +108,74 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 4px;
+    padding: 3px;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
 .stat-icon {
-    font-size: 2.5em;
-    margin-bottom: 2px;
+    font-size: 1.8em;
+    margin-bottom: 1px;
 }
 
 .stat-label {
     font-weight: 600;
-    font-size: 0.7em;
+    font-size: 0.6em;
     margin-bottom: 1px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     color: #666;
 }
 
 .stat-value {
     font-weight: 800;
-    font-size: 1.4em;
+    font-size: 1.1em;
     line-height: 1.0;
 }
 
+/* Larger quote section */
 .weather-quote {
     background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    padding: 8px;
-    margin: 8px 0;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 6px 0;
     font-style: italic;
 }
 
 .quote-text {
-    font-size: 1.0em;
-    line-height: 1.2;
+    font-size: 1.4em;
+    line-height: 1.3;
     color: #495057;
-    margin-bottom: 3px;
+    margin-bottom: 6px;
     text-align: center;
+    font-weight: 500;
 }
 
 .quote-attribution {
-    font-size: 0.8em;
+    font-size: 1.0em;
     color: #6c757d;
     text-align: right;
     font-style: normal;
 }
 
 .quote-author {
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .quote-work {
     color: #868e96;
+    font-weight: 500;
 }
 
 .footer-info {
-    font-size: 0.6em;
+    font-size: 0.7em;
     color: #666;
     text-align: center;
-    padding-top: 3px;
+    padding-top: 4px;
     border-top: 1px solid #ccc;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 /* Status indicators */
@@ -197,26 +207,35 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 500px) {
+    .main-temp {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
     .weather-stats {
         grid-template-columns: 1fr 1fr;
-        gap: 4px;
-        font-size: 0.9em;
+        gap: 3px;
+        font-size: 0.8em;
     }
     
     .temp-display {
-        font-size: 6em;
+        font-size: 3em;
     }
     
     .location-info {
-        font-size: 1.4em;
+        font-size: 1.0em;
     }
     
     .condition-text {
-        font-size: 1.3em;
+        font-size: 0.9em;
+    }
+    
+    .quote-text {
+        font-size: 1.2em;
     }
     
     .weather-container {
-        padding: 4px;
+        padding: 3px;
     }
 }
 </style>
@@ -226,22 +245,26 @@ body {
         <div class="column">
             <div class="markdown">
                 <div class="weather-container">
-                    <!-- Main temperature display -->
+                    <!-- Main temperature display - more compact -->
                     <div class="main-temp">
-                        <div class="temp-display">{{ temp_c | default: "—" }}°</div>
-                        <div class="location-info">{{ location_name | default: "Unknown" }}{% if location_region %}, {{ location_region }}{% endif %}</div>
-                        <div class="condition-text">
-                            <span class="condition-icon">{% if condition_text contains "Sunny" or condition_text contains "Clear" %}☀️{% elsif condition_text contains "Cloudy" or condition_text contains "Overcast" %}☁️{% elsif condition_text contains "Rain" or condition_text contains "Drizzle" %}🌧️{% elsif condition_text contains "Storm" or condition_text contains "Thunder" %}⛈️{% elsif condition_text contains "Snow" or condition_text contains "Blizzard" %}❄️{% elsif condition_text contains "Fog" or condition_text contains "Mist" %}🌫️{% else %}🌤️{% endif %}</span>
-                            {{ condition_text | default: "—" }}
+                        <div class="temp-left">
+                            <div class="temp-display">{{ temp_c | default: "—" }}°</div>
+                            <div class="location-info">{{ location_name | default: "Unknown" }}{% if location_region %}, {{ location_region }}{% endif %}</div>
+                            <div class="condition-text">
+                                <span class="condition-icon">{% if condition_text contains "Sunny" or condition_text contains "Clear" %}☀️{% elsif condition_text contains "Cloudy" or condition_text contains "Overcast" %}☁️{% elsif condition_text contains "Rain" or condition_text contains "Drizzle" %}🌧️{% elsif condition_text contains "Storm" or condition_text contains "Thunder" %}⛈️{% elsif condition_text contains "Snow" or condition_text contains "Blizzard" %}❄️{% elsif condition_text contains "Fog" or condition_text contains "Mist" %}🌫️{% else %}🌤️{% endif %}</span>
+                                {{ condition_text | default: "—" }}
+                            </div>
+                            <div class="feels-like">Feels {{ feels_like_c | default: "—" }}°</div>
                         </div>
-                        <div class="feels-like">Feels {{ feels_like_c | default: "—" }}°</div>
-                        <div class="temp-range">
-                            <span class="temp-high">H: {{ tomorrow_max_c | default: "—" }}°</span>
-                            <span class="temp-low">L: {{ tomorrow_min_c | default: "—" }}°</span>
+                        <div class="temp-right">
+                            <div class="temp-range">
+                                <span class="temp-high">H: {{ tomorrow_max_c | default: "—" }}°</span>
+                                <span class="temp-low">L: {{ tomorrow_min_c | default: "—" }}°</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Weather stats grid -->
+                    <!-- Weather stats grid - more horizontal -->
                     <div class="weather-stats">
                         <div class="weather-stat">
                             <div class="stat-icon">🌡️</div>
@@ -263,9 +286,14 @@ body {
                             <span class="stat-label">Wind</span>
                             <span class="stat-value">{{ wind_kph | default: 0 }}kph</span>
                         </div>
+                        <div class="weather-stat">
+                            <div class="stat-icon">🌡️</div>
+                            <span class="stat-label">High</span>
+                            <span class="stat-value">{{ tomorrow_max_c | default: "—" }}°</span>
+                        </div>
                     </div>
 
-                    <!-- Weather Quote -->
+                    <!-- Weather Quote - larger and more prominent -->
                     {% if weather_quote %}
                     <div class="weather-quote">
                         <div class="quote-text">"{{ weather_quote.quote | raw }}"</div>
