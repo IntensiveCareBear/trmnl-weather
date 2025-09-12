@@ -30,7 +30,9 @@ class GeminiQuoteService:
         self.base_url = "https://generativelanguage.googleapis.com/v1beta"
         self.quotes_cache: Dict[str, WeatherQuote] = {}
         self.last_update: Dict[str, datetime] = {}
-        self.update_interval = timedelta(minutes=30)
+        self.update_interval = timedelta(hours=2)  # Increased from 30 minutes to 2 hours
+        self.fallback_quotes: Dict[str, WeatherQuote] = {}  # Fallback quotes for when API fails
+        self._initialize_fallback_quotes()  # Initialize fallback quotes
     
     async def get_weather_quote(self, location: str, weather_data: Dict[str, Any]) -> Optional[WeatherQuote]:
         """Get a weather-matching quote for the given location and weather data"""
@@ -41,7 +43,20 @@ class GeminiQuoteService:
             logger.info(f"Returning cached quote for {location}")
             return self.quotes_cache.get(cache_key)
         
-        # Generate new quote
+        # Check if we have any cached quote for this location (even if stale)
+        location_cache_key = f"{location}_"
+        for key in self.quotes_cache.keys():
+            if key.startswith(location_cache_key):
+                logger.info(f"Returning stale cached quote for {location} (API call avoided)")
+                return self.quotes_cache.get(key)
+        
+        # Check fallback quotes
+        fallback_key = weather_data.get('condition_text', 'unknown').lower()
+        if fallback_key in self.fallback_quotes:
+            logger.info(f"Returning fallback quote for {location}")
+            return self.fallback_quotes[fallback_key]
+        
+        # Only generate new quote if we have no cached data at all
         try:
             quote = await self._generate_quote(location, weather_data)
             if quote:
@@ -51,8 +66,10 @@ class GeminiQuoteService:
                 return quote
         except Exception as e:
             logger.error(f"Error generating quote for {location}: {str(e)}")
-            # Return cached quote if available, even if stale
-            return self.quotes_cache.get(cache_key)
+            # Return any cached quote if available
+            for key in self.quotes_cache.keys():
+                if key.startswith(location_cache_key):
+                    return self.quotes_cache.get(key)
         
         return None
     
@@ -214,6 +231,51 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
             logger.error(f"Error parsing Gemini response: {str(e)}")
             return None
     
+    def _initialize_fallback_quotes(self):
+        """Initialize fallback quotes for common weather conditions"""
+        self.fallback_quotes = {
+            'sunny': WeatherQuote(
+                quote="The sun was shining on the sea, shining with all his might.",
+                author="Lewis Carroll",
+                work="The Walrus and the Carpenter",
+                weather_condition="Sunny",
+                timestamp=datetime.utcnow(),
+                location="Default"
+            ),
+            'cloudy': WeatherQuote(
+                quote="The sky was overcast, and the clouds hung low and heavy.",
+                author="Charles Dickens",
+                work="Great Expectations",
+                weather_condition="Cloudy",
+                timestamp=datetime.utcnow(),
+                location="Default"
+            ),
+            'rainy': WeatherQuote(
+                quote="The rain to the wind said, 'You push and I'll pelt.'",
+                author="Robert Frost",
+                work="A Line Storm Song",
+                weather_condition="Rainy",
+                timestamp=datetime.utcnow(),
+                location="Default"
+            ),
+            'stormy': WeatherQuote(
+                quote="The wind, which had been threatening all day, began to blow with a fury that seemed to shake the very foundations of the house.",
+                author="Charlotte Brontë",
+                work="Jane Eyre",
+                weather_condition="Stormy",
+                timestamp=datetime.utcnow(),
+                location="Default"
+            ),
+            'snowy': WeatherQuote(
+                quote="The snow was falling, falling, falling, and the world was white.",
+                author="Robert Frost",
+                work="Stopping by Woods on a Snowy Evening",
+                weather_condition="Snowy",
+                timestamp=datetime.utcnow(),
+                location="Default"
+            )
+        }
+    
     async def refresh_quotes(self) -> None:
         """Refresh all cached quotes that are older than the update interval"""
         current_time = datetime.utcnow()
@@ -225,8 +287,8 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
         
         logger.info(f"Refreshing {len(stale_keys)} stale quotes")
         
-        # Remove stale quotes (they'll be regenerated on next request)
-        for key in stale_keys:
+        # Only refresh a few quotes at a time to avoid API rate limits
+        for key in stale_keys[:3]:  # Only refresh 3 quotes per cycle
             if key in self.quotes_cache:
                 del self.quotes_cache[key]
             if key in self.last_update:

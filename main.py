@@ -282,10 +282,10 @@ async def get_quote_cache_stats():
         raise HTTPException(status_code=500, detail="Internal server error")
 
 async def refresh_quotes_background():
-    """Background task to refresh quotes every 30 minutes"""
+    """Background task to refresh quotes every 2 hours"""
     while True:
         try:
-            await asyncio.sleep(1800)  # 30 minutes
+            await asyncio.sleep(7200)  # 2 hours
             await gemini_service.refresh_quotes()
             logger.info("Quote cache refreshed")
         except Exception as e:
