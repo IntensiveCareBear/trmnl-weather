@@ -76,7 +76,7 @@ class GeminiQuoteService:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.base_url}/models/gemini-pro:generateContent",
+                    f"{self.base_url}/models/gemini-1.5-flash:generateContent",
                     headers={
                         "Content-Type": "application/json",
                         "x-goog-api-key": self.api_key
