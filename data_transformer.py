@@ -54,22 +54,22 @@ class WeatherDataTransformer:
             'location_region': location.get('region', ''),
             'timezone': location.get('tz_id', ''),
             
-            # Current weather
-            'temp_c': current.get('temp_c'),
-            'feels_like_c': current.get('feelslike_c'),
+            # Current weather (rounded to integers)
+            'temp_c': round(current.get('temp_c', 0)) if current.get('temp_c') is not None else None,
+            'feels_like_c': round(current.get('feelslike_c', 0)) if current.get('feelslike_c') is not None else None,
             'condition_text': current.get('condition', {}).get('text', ''),
             
-            # Wind info
-            'wind_kph': current.get('wind_kph'),
+            # Wind info (rounded to integers)
+            'wind_kph': round(current.get('wind_kph', 0)) if current.get('wind_kph') is not None else 0,
             'wind_dir': current.get('wind_dir', ''),
-            'windchill_c': current.get('windchill_c'),
+            'windchill_c': round(current.get('windchill_c', 0)) if current.get('windchill_c') is not None else None,
             
-            # Temperature range (tomorrow's forecast)
-            'tomorrow_max_c': tomorrow_data.get('maxtemp_c') if tomorrow_data else None,
-            'tomorrow_min_c': tomorrow_data.get('mintemp_c') if tomorrow_data else None,
+            # Temperature range (tomorrow's forecast, rounded to integers)
+            'tomorrow_max_c': round(tomorrow_data.get('maxtemp_c', 0)) if tomorrow_data and tomorrow_data.get('maxtemp_c') is not None else None,
+            'tomorrow_min_c': round(tomorrow_data.get('mintemp_c', 0)) if tomorrow_data and tomorrow_data.get('mintemp_c') is not None else None,
             
-            # UV Index
-            'uv_index': current.get('uv', 0),
+            # UV Index (rounded to integer)
+            'uv_index': round(current.get('uv', 0)) if current.get('uv') is not None else 0,
             
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
@@ -128,22 +128,22 @@ class WeatherDataTransformer:
             'location_region': location.get('region', ''),
             'timezone': location.get('tz_id', ''),
             
-            # Current weather
-            'temp_c': current.get('temp_c'),
-            'feels_like_c': current.get('feelslike_c'),
+            # Current weather (rounded to integers)
+            'temp_c': round(current.get('temp_c', 0)) if current.get('temp_c') is not None else None,
+            'feels_like_c': round(current.get('feelslike_c', 0)) if current.get('feelslike_c') is not None else None,
             'condition_text': current.get('condition', {}).get('text', ''),
             
-            # Wind info
-            'wind_kph': current.get('wind_kph'),
+            # Wind info (rounded to integers)
+            'wind_kph': round(current.get('wind_kph', 0)) if current.get('wind_kph') is not None else 0,
             'wind_dir': current.get('wind_dir', ''),
-            'windchill_c': current.get('windchill_c'),
+            'windchill_c': round(current.get('windchill_c', 0)) if current.get('windchill_c') is not None else None,
             
-            # Temperature range (tomorrow's forecast)
-            'tomorrow_max_c': tomorrow_data.get('maxtemp_c') if tomorrow_data else None,
-            'tomorrow_min_c': tomorrow_data.get('mintemp_c') if tomorrow_data else None,
+            # Temperature range (tomorrow's forecast, rounded to integers)
+            'tomorrow_max_c': round(tomorrow_data.get('maxtemp_c', 0)) if tomorrow_data and tomorrow_data.get('maxtemp_c') is not None else None,
+            'tomorrow_min_c': round(tomorrow_data.get('mintemp_c', 0)) if tomorrow_data and tomorrow_data.get('mintemp_c') is not None else None,
             
-            # UV Index
-            'uv_index': current.get('uv', 0),
+            # UV Index (rounded to integer)
+            'uv_index': round(current.get('uv', 0)) if current.get('uv') is not None else 0,
             
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,

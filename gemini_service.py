@@ -215,8 +215,11 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
             json_text = text[json_start:json_end]
             quote_data = json.loads(json_text)
             
+            # Bolden weather-related words in the quote
+            boldened_quote = self._bolden_weather_words(quote_data.get('quote', ''), condition, temp_c, wind_speed)
+            
             return WeatherQuote(
-                quote=quote_data.get('quote', ''),
+                quote=boldened_quote,
                 author=quote_data.get('author', 'Unknown'),
                 work=quote_data.get('work', 'Unknown Work'),
                 weather_condition=condition,
@@ -231,11 +234,86 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
             logger.error(f"Error parsing Gemini response: {str(e)}")
             return None
     
+    def _bolden_weather_words(self, quote: str, condition: str, temp_c: float, wind_speed: float) -> str:
+        """Bolden words in the quote that match current weather conditions"""
+        import re
+        
+        # Define weather-related word patterns
+        weather_patterns = {
+            # Temperature words
+            'cold': r'\b(cold|cool|chill|chilly|freezing|frost|ice|winter)\b',
+            'hot': r'\b(hot|warm|heat|summer|swelter|burn|scorch)\b',
+            'mild': r'\b(mild|temperate|pleasant|gentle|soft)\b',
+            
+            # Wind words
+            'windy': r'\b(wind|breeze|gust|blow|blowing|air|gale|storm)\b',
+            'calm': r'\b(calm|still|quiet|peaceful|serene)\b',
+            
+            # Sky conditions
+            'sunny': r'\b(sun|sunny|bright|light|shine|shining|golden|radiant)\b',
+            'cloudy': r'\b(cloud|cloudy|overcast|grey|gray|dull|dim|shadow)\b',
+            'rainy': r'\b(rain|rainy|drizzle|shower|wet|damp|moist|drops)\b',
+            'stormy': r'\b(storm|stormy|thunder|lightning|tempest|fury|rage)\b',
+            'foggy': r'\b(fog|foggy|mist|haze|veil|shroud|obscure)\b',
+            'snowy': r'\b(snow|snowy|white|blanket|crystal|pure|clean)\b',
+            
+            # General weather atmosphere
+            'atmosphere': r'\b(weather|sky|heaven|heavens|atmosphere|air|element)\b',
+            'mood': r'\b(melancholy|cheerful|gloomy|bright|dark|mysterious|ethereal)\b'
+        }
+        
+        # Get current weather characteristics
+        condition_lower = condition.lower()
+        temp_words = []
+        wind_words = []
+        sky_words = []
+        
+        # Determine relevant word categories based on current weather
+        if temp_c < 10:
+            temp_words.extend(['cold', 'cool', 'chill', 'chilly', 'freezing', 'frost', 'ice', 'winter'])
+        elif temp_c > 25:
+            temp_words.extend(['hot', 'warm', 'heat', 'summer', 'swelter', 'burn', 'scorch'])
+        else:
+            temp_words.extend(['mild', 'temperate', 'pleasant', 'gentle', 'soft'])
+        
+        if wind_speed > 15:
+            wind_words.extend(['wind', 'breeze', 'gust', 'blow', 'blowing', 'air', 'gale', 'storm'])
+        else:
+            wind_words.extend(['calm', 'still', 'quiet', 'peaceful', 'serene'])
+        
+        if 'sunny' in condition_lower or 'clear' in condition_lower:
+            sky_words.extend(['sun', 'sunny', 'bright', 'light', 'shine', 'shining', 'golden', 'radiant'])
+        elif 'cloudy' in condition_lower or 'overcast' in condition_lower:
+            sky_words.extend(['cloud', 'cloudy', 'overcast', 'grey', 'gray', 'dull', 'dim', 'shadow'])
+        elif 'rain' in condition_lower:
+            sky_words.extend(['rain', 'rainy', 'drizzle', 'shower', 'wet', 'damp', 'moist', 'drops'])
+        elif 'storm' in condition_lower or 'thunder' in condition_lower:
+            sky_words.extend(['storm', 'stormy', 'thunder', 'lightning', 'tempest', 'fury', 'rage'])
+        elif 'fog' in condition_lower or 'mist' in condition_lower:
+            sky_words.extend(['fog', 'foggy', 'mist', 'haze', 'veil', 'shroud', 'obscure'])
+        elif 'snow' in condition_lower:
+            sky_words.extend(['snow', 'snowy', 'white', 'blanket', 'crystal', 'pure', 'clean'])
+        
+        # Combine all relevant words
+        relevant_words = temp_words + wind_words + sky_words + ['weather', 'sky', 'heaven', 'heavens', 'atmosphere', 'air']
+        
+        # Create a pattern that matches any of the relevant words (case insensitive)
+        pattern = r'\b(' + '|'.join(re.escape(word) for word in relevant_words) + r')\b'
+        
+        # Replace matching words with bolded versions
+        def bolden_match(match):
+            word = match.group(1)
+            return f'<strong>{word}</strong>'
+        
+        boldened_quote = re.sub(pattern, bolden_match, quote, flags=re.IGNORECASE)
+        
+        return boldened_quote
+    
     def _initialize_fallback_quotes(self):
         """Initialize fallback quotes for common weather conditions"""
         self.fallback_quotes = {
             'sunny': WeatherQuote(
-                quote="The sun was shining on the sea, shining with all his might.",
+                quote="The <strong>sun</strong> was <strong>shining</strong> on the sea, <strong>shining</strong> with all his might.",
                 author="Lewis Carroll",
                 work="The Walrus and the Carpenter",
                 weather_condition="Sunny",
@@ -243,7 +321,7 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
                 location="Default"
             ),
             'cloudy': WeatherQuote(
-                quote="The sky was overcast, and the clouds hung low and heavy.",
+                quote="The <strong>sky</strong> was <strong>overcast</strong>, and the <strong>clouds</strong> hung low and heavy.",
                 author="Charles Dickens",
                 work="Great Expectations",
                 weather_condition="Cloudy",
@@ -251,7 +329,7 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
                 location="Default"
             ),
             'rainy': WeatherQuote(
-                quote="The rain to the wind said, 'You push and I'll pelt.'",
+                quote="The <strong>rain</strong> to the <strong>wind</strong> said, 'You push and I'll pelt.'",
                 author="Robert Frost",
                 work="A Line Storm Song",
                 weather_condition="Rainy",
@@ -259,7 +337,7 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
                 location="Default"
             ),
             'stormy': WeatherQuote(
-                quote="The wind, which had been threatening all day, began to blow with a fury that seemed to shake the very foundations of the house.",
+                quote="The <strong>wind</strong>, which had been threatening all day, began to <strong>blow</strong> with a fury that seemed to shake the very foundations of the house.",
                 author="Charlotte Brontë",
                 work="Jane Eyre",
                 weather_condition="Stormy",
@@ -267,7 +345,7 @@ Focus on quotes that evoke the feeling, atmosphere, or mood of this specific wea
                 location="Default"
             ),
             'snowy': WeatherQuote(
-                quote="The snow was falling, falling, falling, and the world was white.",
+                quote="The <strong>snow</strong> was falling, falling, falling, and the world was <strong>white</strong>.",
                 author="Robert Frost",
                 work="Stopping by Woods on a Snowy Evening",
                 weather_condition="Snowy",
