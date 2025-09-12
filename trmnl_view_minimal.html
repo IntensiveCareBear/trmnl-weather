@@ -93,7 +93,7 @@ body {
 /* Horizontal stats layout */
 .weather-stats {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 4px;
     font-size: 0.9em;
     padding: 6px;
@@ -258,7 +258,6 @@ body {
                         </div>
                         <div class="temp-right">
                             <div class="temp-range">
-                                <span class="temp-high">H: {{ tomorrow_max_c | default: "—" }}°</span>
                                 <span class="temp-low">L: {{ tomorrow_min_c | default: "—" }}°</span>
                             </div>
                         </div>
@@ -266,11 +265,6 @@ body {
 
                     <!-- Weather stats grid - more horizontal -->
                     <div class="weather-stats">
-                        <div class="weather-stat">
-                            <div class="stat-icon">🌡️</div>
-                            <span class="stat-label">Wind Chill</span>
-                            <span class="stat-value">{{ windchill_c | default: "—" }}°</span>
-                        </div>
                         <div class="weather-stat">
                             <div class="stat-icon">☀️</div>
                             <span class="stat-label">UV</span>
