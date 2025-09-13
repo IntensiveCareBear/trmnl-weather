@@ -10,8 +10,12 @@ from config import settings
 from data_transformer import WeatherDataTransformer
 from gemini_service import GeminiQuoteService
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging with timestamps
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="TRMNL Weather Plugin", version="1.0.0")
@@ -101,22 +105,42 @@ class TRMNLWebhookService:
             "merge_variables": weather_data
         }
         
+        logger.info(f"📤 Sending weather data to TRMNL webhook: {self.webhook_url}")
+        logger.info(f"📊 Payload keys: {list(payload.keys())}")
+        logger.info(f"📊 Weather data keys: {list(weather_data.keys()) if weather_data else 'None'}")
+        
         async with httpx.AsyncClient() as client:
             try:
+                logger.info(f"🌐 Making HTTP POST request to TRMNL...")
                 response = await client.post(
                     self.webhook_url,
                     json=payload,
                     headers={"Content-Type": "application/json"},
                     timeout=30.0
                 )
+                
+                logger.info(f"📡 TRMNL webhook response status: {response.status_code}")
+                logger.info(f"📡 Response headers: {dict(response.headers)}")
+                
                 response.raise_for_status()
-                logger.info(f"Successfully sent weather data to TRMNL webhook: {response.status_code}")
+                logger.info(f"✅ Successfully sent weather data to TRMNL webhook: {response.status_code}")
+                
+                # Log response body for debugging
+                try:
+                    response_json = response.json()
+                    logger.info(f"📄 TRMNL response body: {response_json}")
+                except Exception as json_e:
+                    logger.info(f"📄 TRMNL response body (text): {response.text}")
+                
                 return True
             except httpx.HTTPStatusError as e:
-                logger.error(f"TRMNL webhook error: {e.response.status_code} - {e.response.text}")
+                logger.error(f"❌ TRMNL webhook HTTP error: {e.response.status_code}")
+                logger.error(f"❌ Error response text: {e.response.text}")
+                logger.error(f"❌ Request URL: {self.webhook_url}")
                 return False
             except Exception as e:
-                logger.error(f"Unexpected error sending to TRMNL webhook: {str(e)}")
+                logger.error(f"❌ Unexpected error sending to TRMNL webhook: {str(e)}")
+                logger.error(f"❌ Error type: {type(e).__name__}")
                 return False
 
 # Initialize services
@@ -131,18 +155,25 @@ async def scheduled_weather_update():
     while True:
         try:
             logger.info(f"🔄 Running scheduled weather update (every {settings.UPDATE_INTERVAL_MINUTES} minutes)...")
+            logger.info(f"📍 Default location: {settings.DEFAULT_LOCATION}")
+            logger.info(f"🔗 TRMNL webhook URL: {settings.TRMNL_WEBHOOK_URL}")
             
             # Get forecast data for default location (includes current + tomorrow's forecast)
+            logger.info(f"🌤️ Fetching forecast data for {settings.DEFAULT_LOCATION}...")
             weather_data = await weather_service.get_forecast(
                 settings.DEFAULT_LOCATION,
                 days=1,
                 include_air_quality=True
             )
+            logger.info(f"📊 Raw weather data received: {list(weather_data.keys()) if weather_data else 'None'}")
             
             # Transform data for TRMNL view
+            logger.info(f"🔄 Transforming weather data for TRMNL view...")
             trmnl_data = await data_transformer.transform_forecast(weather_data)
+            logger.info(f"📱 Transformed data keys: {list(trmnl_data.keys()) if trmnl_data else 'None'}")
             
             # Send to TRMNL webhook
+            logger.info(f"📤 Sending transformed data to TRMNL webhook...")
             success = await trmnl_service.send_weather_data(trmnl_data)
             
             if success:
@@ -152,8 +183,12 @@ async def scheduled_weather_update():
                 
         except Exception as e:
             logger.error(f"❌ Error in scheduled weather update: {str(e)}")
+            logger.error(f"❌ Error type: {type(e).__name__}")
+            import traceback
+            logger.error(f"❌ Traceback: {traceback.format_exc()}")
         
         # Wait for configured interval (convert minutes to seconds)
+        logger.info(f"⏰ Waiting {settings.UPDATE_INTERVAL_MINUTES} minutes until next update...")
         await asyncio.sleep(settings.UPDATE_INTERVAL_MINUTES * 60)
 
 
@@ -395,6 +430,12 @@ async def refresh_quotes_background():
 @app.on_event("startup")
 async def startup_event():
     """Start background tasks on startup"""
+    logger.info("🚀 TRMNL Weather Plugin starting up...")
+    logger.info(f"📍 Default location: {settings.DEFAULT_LOCATION}")
+    logger.info(f"🔗 TRMNL webhook URL: {settings.TRMNL_WEBHOOK_URL}")
+    logger.info(f"⏰ Update interval: {settings.UPDATE_INTERVAL_MINUTES} minutes")
+    logger.info(f"🔄 Scheduled updates enabled: {settings.ENABLE_SCHEDULED_UPDATES}")
+    
     # Start scheduled weather updates
     if settings.ENABLE_SCHEDULED_UPDATES:
         logger.info(f"🚀 Starting scheduled weather updates every {settings.UPDATE_INTERVAL_MINUTES} minutes...")
@@ -404,7 +445,8 @@ async def startup_event():
     
     # Start quote refresh task
     asyncio.create_task(refresh_quotes_background())
-    logger.info("Background quote refresh task started")
+    logger.info("📚 Background quote refresh task started")
+    logger.info("✅ TRMNL Weather Plugin startup complete!")
 
 if __name__ == "__main__":
     import uvicorn
