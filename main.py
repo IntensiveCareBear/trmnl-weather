@@ -6,17 +6,53 @@ from typing import Optional, Dict, Any
 import logging
 from datetime import datetime
 import asyncio
+import pytz
+import os
 from config import settings
 from data_transformer import WeatherDataTransformer
 from gemini_service import GeminiQuoteService
 
-# Configure logging with timestamps
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+# Custom formatter for local timezone
+class LocalTimeFormatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        # Get local timezone (try to detect automatically)
+        try:
+            # Try to get system timezone from environment or use Pacific Time as default
+            timezone_name = os.getenv('TZ', 'America/Los_Angeles')
+            local_tz = pytz.timezone(timezone_name)
+        except:
+            # Fallback to UTC if timezone detection fails
+            local_tz = pytz.timezone('UTC')
+        
+        # Convert UTC time to local time
+        dt = datetime.fromtimestamp(record.created, tz=pytz.UTC)
+        local_dt = dt.astimezone(local_tz)
+        
+        if datefmt:
+            return local_dt.strftime(datefmt)
+        else:
+            return local_dt.strftime('%Y-%m-%d %H:%M:%S %Z')
+
+# Configure logging with local timezone timestamps
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# Create console handler with custom formatter
+console_handler = logging.StreamHandler()
+formatter = LocalTimeFormatter(
+    fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S %Z'
+)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+# Remove any existing handlers to avoid duplicates
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
+# Add our custom handler to root logger
+logging.root.addHandler(console_handler)
+logging.root.setLevel(logging.INFO)
 
 app = FastAPI(title="TRMNL Weather Plugin", version="1.0.0")
 
