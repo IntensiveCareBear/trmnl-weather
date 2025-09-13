@@ -249,7 +249,7 @@ async def get_weather_trmnl_view_default(background_tasks: BackgroundTasks):
         )
         
         # Transform data for TRMNL view
-        transformed_data = await transformer.transform_forecast(weather_data)
+        transformed_data = await data_transformer.transform_forecast(weather_data)
         
         # Send transformed data to TRMNL webhook in background
         background_tasks.add_task(trmnl_service.send_weather_data, transformed_data)
