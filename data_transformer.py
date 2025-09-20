@@ -66,7 +66,7 @@ class WeatherDataTransformer:
             'wind_dir': current.get('wind_dir', ''),
             'windchill_c': round(current.get('windchill_c', 0)) if current.get('windchill_c') is not None else None,
             
-            # Temperature range (tomorrow's forecast, rounded to integers)
+            # Temperature range (today's forecast, rounded to integers)
             'tomorrow_max_c': round(tomorrow_data.get('maxtemp_c', 0)) if tomorrow_data and tomorrow_data.get('maxtemp_c') is not None else None,
             'tomorrow_min_c': round(tomorrow_data.get('mintemp_c', 0)) if tomorrow_data and tomorrow_data.get('mintemp_c') is not None else None,
             
@@ -76,11 +76,11 @@ class WeatherDataTransformer:
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
             
-            # Astronomical data
-            'sunrise': astro_data.get('sunrise', '') if astro_data else '',
-            'sunset': astro_data.get('sunset', '') if astro_data else '',
-            'moonrise': astro_data.get('moonrise', '') if astro_data else '',
-            'moonset': astro_data.get('moonset', '') if astro_data else '',
+            # Astronomical data (formatted to 24-hour format)
+            'sunrise': WeatherDataTransformer._format_time_24h(astro_data.get('sunrise', '')) if astro_data else '',
+            'sunset': WeatherDataTransformer._format_time_24h(astro_data.get('sunset', '')) if astro_data else '',
+            'moonrise': WeatherDataTransformer._format_time_24h(astro_data.get('moonrise', '')) if astro_data else '',
+            'moonset': WeatherDataTransformer._format_time_24h(astro_data.get('moonset', '')) if astro_data else '',
             'moon_phase': astro_data.get('moon_phase', '') if astro_data else '',
             'moon_illumination': astro_data.get('moon_illumination', '') if astro_data else '',
             
@@ -150,7 +150,7 @@ class WeatherDataTransformer:
             'wind_dir': current.get('wind_dir', ''),
             'windchill_c': round(current.get('windchill_c', 0)) if current.get('windchill_c') is not None else None,
             
-            # Temperature range (tomorrow's forecast, rounded to integers)
+            # Temperature range (today's forecast, rounded to integers)
             'tomorrow_max_c': round(tomorrow_data.get('maxtemp_c', 0)) if tomorrow_data and tomorrow_data.get('maxtemp_c') is not None else None,
             'tomorrow_min_c': round(tomorrow_data.get('mintemp_c', 0)) if tomorrow_data and tomorrow_data.get('mintemp_c') is not None else None,
             
@@ -160,11 +160,11 @@ class WeatherDataTransformer:
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
             
-            # Astronomical data
-            'sunrise': astro_data.get('sunrise', '') if astro_data else '',
-            'sunset': astro_data.get('sunset', '') if astro_data else '',
-            'moonrise': astro_data.get('moonrise', '') if astro_data else '',
-            'moonset': astro_data.get('moonset', '') if astro_data else '',
+            # Astronomical data (formatted to 24-hour format)
+            'sunrise': WeatherDataTransformer._format_time_24h(astro_data.get('sunrise', '')) if astro_data else '',
+            'sunset': WeatherDataTransformer._format_time_24h(astro_data.get('sunset', '')) if astro_data else '',
+            'moonrise': WeatherDataTransformer._format_time_24h(astro_data.get('moonrise', '')) if astro_data else '',
+            'moonset': WeatherDataTransformer._format_time_24h(astro_data.get('moonset', '')) if astro_data else '',
             'moon_phase': astro_data.get('moon_phase', '') if astro_data else '',
             'moon_illumination': astro_data.get('moon_illumination', '') if astro_data else '',
             
@@ -200,6 +200,21 @@ class WeatherDataTransformer:
             return dt.strftime("%I:%M %p")
         except Exception:
             return "—"
+    
+    @staticmethod
+    def _format_time_24h(time_str: str) -> str:
+        """Convert 12-hour time format to 24-hour format"""
+        if not time_str:
+            return "—"
+        
+        try:
+            # Parse time in format like "06:45 AM" or "18:30 PM"
+            from datetime import datetime
+            time_obj = datetime.strptime(time_str, "%I:%M %p")
+            return time_obj.strftime("%H:%M")
+        except Exception:
+            # If parsing fails, return original string
+            return time_str
     
     @staticmethod
     def get_aqi_status(aqi_value: int) -> str:
