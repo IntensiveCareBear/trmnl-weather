@@ -23,8 +23,10 @@ class WeatherDataTransformer:
         # Get tomorrow's forecast if available
         forecast = data.get('forecast', {})
         tomorrow_data = None
+        astro_data = None
         if forecast and forecast.get('forecastday'):
             tomorrow_data = forecast['forecastday'][0].get('day', {})
+            astro_data = forecast['forecastday'][0].get('astro', {})
         
         # Get weather quote if Gemini service is available
         quote_data = None
@@ -74,6 +76,14 @@ class WeatherDataTransformer:
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
             
+            # Astronomical data
+            'sunrise': astro_data.get('sunrise', '') if astro_data else '',
+            'sunset': astro_data.get('sunset', '') if astro_data else '',
+            'moonrise': astro_data.get('moonrise', '') if astro_data else '',
+            'moonset': astro_data.get('moonset', '') if astro_data else '',
+            'moon_phase': astro_data.get('moon_phase', '') if astro_data else '',
+            'moon_illumination': astro_data.get('moon_illumination', '') if astro_data else '',
+            
             # Timestamp
             'formatted_time': WeatherDataTransformer._format_timestamp(
                 current.get('last_updated_epoch'),
@@ -95,8 +105,10 @@ class WeatherDataTransformer:
         
         # Get tomorrow's data (first forecast day)
         tomorrow_data = None
+        astro_data = None
         if forecast and forecast.get('forecastday'):
             tomorrow_data = forecast['forecastday'][0].get('day', {})
+            astro_data = forecast['forecastday'][0].get('astro', {})
         
         air_quality = current.get('air_quality', {})
         
@@ -147,6 +159,14 @@ class WeatherDataTransformer:
             
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
+            
+            # Astronomical data
+            'sunrise': astro_data.get('sunrise', '') if astro_data else '',
+            'sunset': astro_data.get('sunset', '') if astro_data else '',
+            'moonrise': astro_data.get('moonrise', '') if astro_data else '',
+            'moonset': astro_data.get('moonset', '') if astro_data else '',
+            'moon_phase': astro_data.get('moon_phase', '') if astro_data else '',
+            'moon_illumination': astro_data.get('moon_illumination', '') if astro_data else '',
             
             # Timestamp
             'formatted_time': WeatherDataTransformer._format_timestamp(
