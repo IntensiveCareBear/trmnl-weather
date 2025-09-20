@@ -39,28 +39,45 @@ body {
 .top-left {
     grid-column: 1;
     grid-row: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 10px;
+}
+
+.feels-like-section {
+    flex: 1;
+    text-align: center;
+    padding: 0 5px;
 }
 
 .feels-like-temp {
-    font-size: 4.5em;
+    font-size: 3.2em;
     font-weight: 800;
     line-height: 0.8;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     letter-spacing: -0.02em;
 }
 
 .feels-like-label {
-    font-size: 1.2em;
+    font-size: 0.9em;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 2px;
     color: #000;
+}
+
+.temp-range-section {
+    flex: 1;
+    text-align: center;
+    padding: 0 5px;
 }
 
 .temp-range {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    font-size: 1.1em;
+    font-size: 1.0em;
 }
 
 .temp-high {
@@ -84,56 +101,57 @@ body {
     grid-column: 2;
     grid-row: 1;
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
 }
 
 .aqi-section {
     flex: 1;
     text-align: center;
-    margin-right: 10px;
+    padding: 0 5px;
 }
 
 .aqi-value {
-    font-size: 3.5em;
+    font-size: 3.2em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
 }
 
 .aqi-label {
-    font-size: 1.0em;
+    font-size: 0.9em;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .aqi-status {
-    font-size: 0.8em;
+    font-size: 0.7em;
     font-weight: 500;
 }
 
 .uv-section {
     flex: 1;
     text-align: center;
-    margin-left: 10px;
+    padding: 0 5px;
 }
 
 .uv-value {
-    font-size: 3.5em;
+    font-size: 3.2em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
 }
 
 .uv-label {
-    font-size: 1.0em;
+    font-size: 0.9em;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .uv-status {
-    font-size: 0.8em;
+    font-size: 0.7em;
     font-weight: 500;
 }
 
@@ -142,19 +160,20 @@ body {
     grid-column: 1;
     grid-row: 2;
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
 }
 
 .wind-section {
     flex: 1;
     text-align: center;
-    margin-right: 10px;
+    padding: 0 5px;
 }
 
 .wind-speed {
-    font-size: 3.5em;
+    font-size: 3.2em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
@@ -162,14 +181,14 @@ body {
 }
 
 .wind-label {
-    font-size: 1.0em;
+    font-size: 0.9em;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     color: #000;
 }
 
 .wind-details {
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 .wind-direction {
@@ -185,25 +204,25 @@ body {
 .rain-section {
     flex: 1;
     text-align: center;
-    margin-left: 10px;
+    padding: 0 5px;
 }
 
 .rain-chance {
-    font-size: 3.5em;
+    font-size: 3.2em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
 }
 
 .rain-label {
-    font-size: 1.0em;
+    font-size: 0.9em;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     color: #000;
 }
 
 .rain-period {
-    font-size: 0.8em;
+    font-size: 0.7em;
     font-weight: 500;
     color: #000;
 }
@@ -213,49 +232,65 @@ body {
     grid-column: 2;
     grid-row: 2;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    padding: 12px;
+    padding: 10px;
+}
+
+.sun-section {
+    flex: 1;
     text-align: center;
+    padding: 0 5px;
 }
 
-.astro-section {
-    margin-bottom: 20px;
-}
-
-.astro-value {
-    font-size: 1.8em;
-    font-weight: 800;
-    line-height: 0.8;
-    margin-bottom: 4px;
-}
-
-.astro-label {
-    font-size: 1.0em;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.moon-section {
-    margin-top: 20px;
-}
-
-.moon-phase {
+.sunrise-time {
     font-size: 1.6em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
 }
 
-.moon-label {
-    font-size: 1.0em;
+.sunrise-label {
+    font-size: 0.9em;
     font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.sunset-time {
+    font-size: 1.6em;
+    font-weight: 800;
+    line-height: 0.8;
     margin-bottom: 4px;
 }
 
-.moon-illumination {
+.sunset-label {
     font-size: 0.9em;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.moon-section {
+    flex: 1;
+    text-align: center;
+    padding: 0 5px;
+}
+
+.moon-phase {
+    font-size: 1.4em;
+    font-weight: 800;
+    line-height: 0.8;
+    margin-bottom: 4px;
+}
+
+.moon-label {
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.moon-illumination {
+    font-size: 0.7em;
     font-weight: 500;
     color: #000;
 }
@@ -370,15 +405,15 @@ body {
     }
     
     .feels-like-temp {
-        font-size: 3.5em;
-    }
-    
-    .wind-speed, .rain-chance, .aqi-value, .uv-value {
         font-size: 2.8em;
     }
     
-    .astro-value {
-        font-size: 1.4em;
+    .wind-speed, .rain-chance, .aqi-value, .uv-value {
+        font-size: 2.5em;
+    }
+    
+    .sunrise-time, .sunset-time {
+        font-size: 1.3em;
     }
     
     .moon-phase {
@@ -406,12 +441,16 @@ body {
 
                     <!-- Top Left: Feels Like Temperature -->
                     <div class="quadrant top-left">
-                        <div class="feels-like-temp">{{ feels_like_c | default: "—" }}°</div>
-                        <div class="feels-like-label">Feels Like</div>
-                        <div class="temp-range">
-                            <div class="range-label">Today</div>
-                            <div class="temp-high">H: {{ tomorrow_max_c | default: "—" }}°</div>
-                            <div class="temp-low">L: {{ tomorrow_min_c | default: "—" }}°</div>
+                        <div class="feels-like-section">
+                            <div class="feels-like-temp">{{ feels_like_c | default: "—" }}°</div>
+                            <div class="feels-like-label">Feels Like</div>
+                        </div>
+                        <div class="temp-range-section">
+                            <div class="temp-range">
+                                <div class="range-label">Today</div>
+                                <div class="temp-high">H: {{ tomorrow_max_c | default: "—" }}°</div>
+                                <div class="temp-low">L: {{ tomorrow_min_c | default: "—" }}°</div>
+                            </div>
                         </div>
                     </div>
 
@@ -456,13 +495,11 @@ body {
 
                     <!-- Bottom Right: Astronomical Data -->
                     <div class="quadrant bottom-right">
-                        <div class="astro-section">
-                            <div class="astro-value">{{ sunrise | default: "—" }}</div>
-                            <div class="astro-label">Sunrise</div>
-                        </div>
-                        <div class="astro-section">
-                            <div class="astro-value">{{ sunset | default: "—" }}</div>
-                            <div class="astro-label">Sunset</div>
+                        <div class="sun-section">
+                            <div class="sunrise-time">{{ sunrise | default: "—" }}</div>
+                            <div class="sunrise-label">Sunrise</div>
+                            <div class="sunset-time">{{ sunset | default: "—" }}</div>
+                            <div class="sunset-label">Sunset</div>
                         </div>
                         <div class="moon-section">
                             <div class="moon-phase">{{ moon_phase | default: "—" }}</div>
