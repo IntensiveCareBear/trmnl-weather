@@ -83,79 +83,93 @@ body {
 .top-right {
     grid-column: 2;
     grid-row: 1;
+    display: flex;
     justify-content: space-around;
+    align-items: center;
+    padding: 20px;
 }
 
 .aqi-section {
-    margin-bottom: 20px;
+    flex: 1;
+    text-align: center;
+    margin-right: 10px;
 }
 
 .aqi-value {
-    font-size: 4em;
+    font-size: 3.5em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
 }
 
 .aqi-label {
-    font-size: 1.2em;
+    font-size: 1.0em;
     font-weight: 600;
     margin-bottom: 4px;
 }
 
 .aqi-status {
-    font-size: 0.9em;
+    font-size: 0.8em;
     font-weight: 500;
 }
 
 .uv-section {
-    margin-top: 20px;
+    flex: 1;
+    text-align: center;
+    margin-left: 10px;
 }
 
 .uv-value {
-    font-size: 4em;
+    font-size: 3.5em;
     font-weight: 800;
     line-height: 0.8;
     margin-bottom: 4px;
 }
 
 .uv-label {
-    font-size: 1.2em;
+    font-size: 1.0em;
     font-weight: 600;
     margin-bottom: 4px;
 }
 
 .uv-status {
-    font-size: 0.9em;
+    font-size: 0.8em;
     font-weight: 500;
 }
 
-/* Bottom Left: Wind Speed */
+/* Bottom Left: Wind Speed and Rain Chance */
 .bottom-left {
     grid-column: 1;
     grid-row: 2;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+
+.wind-section {
+    flex: 1;
+    text-align: center;
+    margin-right: 10px;
 }
 
 .wind-speed {
-    font-size: 4.5em;
+    font-size: 3.5em;
     font-weight: 800;
     line-height: 0.8;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     letter-spacing: -0.02em;
 }
 
 .wind-label {
-    font-size: 1.2em;
+    font-size: 1.0em;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
     color: #000;
 }
 
 .wind-details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 1.0em;
+    font-size: 0.9em;
 }
 
 .wind-direction {
@@ -164,6 +178,32 @@ body {
 }
 
 .wind-gusts {
+    font-weight: 500;
+    color: #000;
+}
+
+.rain-section {
+    flex: 1;
+    text-align: center;
+    margin-left: 10px;
+}
+
+.rain-chance {
+    font-size: 3.5em;
+    font-weight: 800;
+    line-height: 0.8;
+    margin-bottom: 4px;
+}
+
+.rain-label {
+    font-size: 1.0em;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #000;
+}
+
+.rain-period {
+    font-size: 0.8em;
     font-weight: 500;
     color: #000;
 }
@@ -329,12 +369,12 @@ body {
         padding: 4px;
     }
     
-    .feels-like-temp, .wind-speed {
+    .feels-like-temp {
         font-size: 3.5em;
     }
     
-    .aqi-value, .uv-value {
-        font-size: 3em;
+    .wind-speed, .rain-chance, .aqi-value, .uv-value {
+        font-size: 2.8em;
     }
     
     .astro-value {
@@ -397,13 +437,20 @@ body {
                         </div>
                     </div>
 
-                    <!-- Bottom Left: Wind Speed -->
+                    <!-- Bottom Left: Wind Speed and Rain Chance -->
                     <div class="quadrant bottom-left">
-                        <div class="wind-speed">{{ wind_kph | default: 0 }}</div>
-                        <div class="wind-label">Wind Speed</div>
-                        <div class="wind-details">
-                            <div class="wind-direction">{{ wind_dir | default: "—" }}</div>
-                            <div class="wind-gusts">kph</div>
+                        <div class="wind-section">
+                            <div class="wind-speed">{{ wind_kph | default: 0 }}</div>
+                            <div class="wind-label">Wind Speed</div>
+                            <div class="wind-details">
+                                <div class="wind-direction">{{ wind_dir | default: "—" }}</div>
+                                <div class="wind-gusts">kph</div>
+                            </div>
+                        </div>
+                        <div class="rain-section">
+                            <div class="rain-chance">{{ rain_chance | default: 0 }}%</div>
+                            <div class="rain-label">Rain Chance</div>
+                            <div class="rain-period">Next 24h</div>
                         </div>
                     </div>
 

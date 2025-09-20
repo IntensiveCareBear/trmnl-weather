@@ -73,6 +73,9 @@ class WeatherDataTransformer:
             # UV Index (rounded to integer)
             'uv_index': round(current.get('uv', 0)) if current.get('uv') is not None else 0,
             
+            # Rain chance (from forecast data)
+            'rain_chance': round(tomorrow_data.get('daily_chance_of_rain', 0)) if tomorrow_data and tomorrow_data.get('daily_chance_of_rain') is not None else 0,
+            
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
             
@@ -156,6 +159,9 @@ class WeatherDataTransformer:
             
             # UV Index (rounded to integer)
             'uv_index': round(current.get('uv', 0)) if current.get('uv') is not None else 0,
+            
+            # Rain chance (from forecast data)
+            'rain_chance': round(tomorrow_data.get('daily_chance_of_rain', 0)) if tomorrow_data and tomorrow_data.get('daily_chance_of_rain') is not None else 0,
             
             # Air Quality Index (US EPA) - try multiple sources
             'aqi_us': air_quality.get('us-epa-index') or air_quality.get('us_epa_index') or air_quality.get('epa') or 0,
